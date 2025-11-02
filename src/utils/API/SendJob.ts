@@ -37,30 +37,49 @@ export interface JobResultGetter {
 export async function SendJob(
   jobs: Job[],
   headers: Record<string, string> = {}
-): Promise<JobResultGetter> {
+): Promise<JobResultGetter | undefined> {
   const spicyLyricsVersion = Session.SpicyLyrics.GetCurrentVersion()?.Text;
-  const res = await fetch(`${API_URL}/query`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "SpicyLyrics-Version": spicyLyricsVersion ?? "",
-      ...headers,
-    },
-    body: JSON.stringify({ jobs }),
-  });
 
-  if (!res.ok) throw new Error(`Request failed with status ${res.status}`);
+  let res: Response = {} as any;
+  for (const url of API_URL) {
+    try {
+      console.log(`Sending jobs to ${url}...`);
+      res = await fetch(`${url}/query`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "SpicyLyrics-Version": spicyLyricsVersion ?? "",
+          ...headers,
+        },
+        body: JSON.stringify({ jobs }),
+      });
 
-  const data = await res.json();
-  const results: Map<string, JobResult> = new Map();
 
-  for (const job of data.jobs) {
-    results.set(job.handler, job.result);
+    } catch (error) {
+      console.error(`API at ${url} threw an error: ${(error as Error).message}. Trying next URL if available...`);
+      console.error(res.json());
+      continue;
+    }
+
+
+    if (!res.ok || (((await res.clone().json()).jobs[0].result.status) == 404 && url == API_URL[0])) {
+      console.warn(`API at ${url} responded with status ${res.status} and body status ${(await res.clone().json()).jobs[0].result.status}. Trying next URL if available...`);
+      continue;
+    }
+
+    const data = await res.json();
+    const results: Map<string, JobResult> = new Map();
+
+    for (const job of data.jobs) {
+      results.set(job.handler, job.result);
+    }
+
+    return {
+      get(handler: string): JobResult | undefined {
+        return results.get(handler);
+      },
+    };
   }
 
-  return {
-    get(handler: string): JobResult | undefined {
-      return results.get(handler);
-    },
-  };
+  throw new Error("All API endpoints are unreachable.");
 }

@@ -192,7 +192,7 @@ export function ApplySyllableLyrics(data: LyricsData, UseRomanized: boolean = fa
         ? nextLineStartTime === 0
           ? line.Lead.EndTime
           : lineEndTimeAndNextLineStartTimeDistance < lyricsBetweenShow &&
-              nextLineStartTime > line.Lead.EndTime
+            nextLineStartTime > line.Lead.EndTime
             ? nextLineStartTime
             : line.Lead.EndTime
         : line.Lead.EndTime;

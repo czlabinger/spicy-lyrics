@@ -166,6 +166,8 @@ export default async function fetchLyrics(uri: string): Promise<[object | string
       }
     );
 
+    if (!jobs) return ["unknown-error", 0];
+
     const lyricsJob = jobs.get("LYRICS_ID");
     if (!lyricsJob) {
       console.error("Lyrics job not found");

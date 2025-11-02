@@ -84,6 +84,7 @@ async function main() {
     });
   });
 
+
   if (!storage.get("show_topbar_notifications")) {
     storage.set("show_topbar_notifications", "true");
   }
@@ -183,7 +184,7 @@ async function main() {
     Defaults.hide_npv_bg = storage.get("hide_npv_bg") === "true";
   }
 
-  Defaults.SpicyLyricsVersion = window._spicy_lyrics_metadata?.LoadedVersion ?? "5.18.3";
+  Defaults.SpicyLyricsVersion = window._spicy_lyrics_metadata?.LoadedVersion ?? "5.18.9";
 
   /* if (storage.get("lyrics_spacing")) {
     if (storage.get("lyrics_spacing") === "None") {

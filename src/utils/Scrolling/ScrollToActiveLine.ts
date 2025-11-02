@@ -14,8 +14,8 @@ import { ScrollIntoCenterViewCSS } from "../ScrollIntoView/Center.ts";
 import { ScrollIntoTopViewCSS } from "../ScrollIntoView/Top.ts";
 
 // Define intersection types that include _LineIndex
-type LyricsLineWithIndex = LyricsLine & { _LineIndex: number };
-type LyricsSyllableWithIndex = LyricsSyllable & { _LineIndex: number };
+type LyricsLineWithIndex = LyricsLine & { _LineIndex: number; };
+type LyricsSyllableWithIndex = LyricsSyllable & { _LineIndex: number; };
 type EnhancedLyricsItem = LyricsLineWithIndex | LyricsSyllableWithIndex;
 
 // Define proper types for variables
